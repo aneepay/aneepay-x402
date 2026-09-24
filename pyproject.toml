@@ -1,0 +1,96 @@
+[project]
+name = "aneepay-x402"
+dynamic = ["version"]
+description = "Merchant-side x402 (exact, EVM) payment SDK for the AneePay facilitator"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["x402", "payments", "eip3009", "usdc", "httpx", "starlette"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "starlette>=0.37",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0,<9",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+]
+
+[project.urls]
+Homepage = "https://aneepay.com/"
+Repository = "https://github.com/aneepay/aneepay-x402"
+Issues = "https://github.com/aneepay/aneepay-x402/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/x402_sdk/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/x402_sdk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D100",
+    "D104",
+    "D107",
+    "D203",
+    "D213",
+    "COM812",
+    "ISC001",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "RUF012",
+    "A003",
+    "FA100",
+    "FBT001",
+    "FBT002",
+    "ANN401",
+    "CPY001",
+    "EM101",
+    "EM102",
+    "EM103",
+    "TRY003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "INP001", "ANN", "S101", "PLR2004", "SLF001"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 7
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+docstring-code-format = true
