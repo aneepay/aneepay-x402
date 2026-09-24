@@ -1,0 +1,34 @@
+name: Cleanup old artifacts
+on:
+  schedule:
+    - cron: "0 0 * * *" # Run every day at 00:00 (UTC)
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    name: Cleaning the repository
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Delete old releases
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        with:
+          keep_latest: 15 # Keep the 15 most recent releases
+          delete_tags: true # Delete associated tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete old workflow runs
+        uses: yanovation/delete-old-actions@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          days-ago: 30
+          dry-run: false
+          keep-latest: 10
