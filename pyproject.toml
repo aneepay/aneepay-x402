@@ -8,7 +8,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "aneepay" }]
 maintainers = [{ name = "aneepay" }]
-keywords = ["x402", "payments", "eip3009", "usdc", "httpx", "starlette"]
+keywords = ["aneepay", "x402", "payments", "eip3009", "usdc", "httpx", "starlette"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
