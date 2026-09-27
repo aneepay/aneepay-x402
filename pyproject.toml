@@ -50,6 +50,19 @@ path = "src/x402_sdk/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/x402_sdk"]
 
+# The sdist must contain only what a consumer needs to build and test the
+# package. Without an explicit include list, hatchling falls back to the
+# project root, and tool directories that are not ignored by the root
+# .gitignore (e.g. .opencode/node_modules) end up inside the archive.
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
