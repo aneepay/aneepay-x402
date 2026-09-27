@@ -1,43 +1,134 @@
-name: Publish - x402 Python
+name: Publish - aneepay-x402
 
 on:
   push:
     tags:
-      - "v*"
+      # Only real releases. A bare "v*" also matches tags such as vfoo or v-next.
+      - "v*.*.*"
+  # Manual runs verify the release pipeline (build, lint, tests, metadata)
+  # but never upload: PyPI forbids replacing an already published version.
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag or branch to build (defaults to the ref this was dispatched from)"
+        required: false
+        type: string
+
+# Two tags pushed in quick succession must not race for the same version.
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
+
+env:
+  # Pinned so that a release is built by the same uv that CI tests with.
+  # Keep in sync with quality.yml.
+  UV_VERSION: "0.11.8"
+  ARTIFACT_NAME: aneepay-x402-dist
 
 jobs:
   build:
     name: Build distribution
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v7
         with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: ${{ env.UV_VERSION }}
           python-version: "3.12"
+          cache-dependency-glob: "uv.lock"
+
+      # The version lives in __init__.py ([tool.hatch.version]), not in the tag.
+      # Read it with a bare interpreter so the project is not installed first.
+      - name: Read package version
+        id: version
+        run: |
+          version="$(uv run --no-project python -c 'import re,pathlib; print(re.search(r"__version__\s*=\s*\"([^\"]+)\"", pathlib.Path("src/x402_sdk/__init__.py").read_text()).group(1))')"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Package version: ${version}"
+
+      - name: Verify tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          if [ "$tag" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match __version__ ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+
+      # A tag push bypasses quality.yml, so the release gate lives here.
+      - name: Install dev dependencies
+        run: uv sync --extra dev --frozen
+
+      - name: Ruff check
+        run: uv run ruff check .
+
+      - name: Ruff format
+        run: uv run ruff format --check .
+
+      - name: Tests
+        run: uv run pytest
+
       - name: Build sdist and wheel
-        run: uv build
+        run: uv build --out-dir dist
+
+      - name: Check distribution metadata
+        run: uvx --from twine twine check dist/*
+
+      - name: Verify artifact names carry the version
+        run: |
+          expected="aneepay_x402-${{ steps.version.outputs.version }}"
+          shopt -s nullglob
+          files=(dist/*)
+          if [ "${#files[@]}" -ne 2 ]; then
+            echo "::error::Expected 2 artifacts, found ${#files[@]}"
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            case "$(basename "$file")" in
+              "$expected".tar.gz | "$expected"-*.whl) ;;
+              *) echo "::error::Unexpected artifact: $file"; exit 1 ;;
+            esac
+          done
+          ls -l dist
+
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: x402-python-dist
+          name: ${{ env.ARTIFACT_NAME }}
           path: dist/
+          if-no-files-found: error
+          retention-days: 7
 
   publish:
     name: Publish to PyPI
     needs: build
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # The environment gates approval and the trusted publisher; id-token is
+    # what mints the OIDC token the publish action exchanges for an upload.
     environment: pypi
     permissions:
       id-token: write
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
-          name: x402-python-dist
+          name: ${{ env.ARTIFACT_NAME }}
           path: dist/
+
+      # Also uploads PEP 740 Sigstore attestations by default, because the job
+      # authenticates through Trusted Publishing. Keep the floating ref: the
+      # PyPI docs require release/v1, a pinned SHA is not supported.
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
