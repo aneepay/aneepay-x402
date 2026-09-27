@@ -17,14 +17,6 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v7
 
-      - name: Delete old releases
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        with:
-          keep_latest: 15 # Keep the 15 most recent releases
-          delete_tags: true # Delete associated tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Delete old workflow runs
         uses: yanovation/delete-old-actions@v1
         with:
