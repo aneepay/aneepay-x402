@@ -10,3 +10,4 @@ build/
 .coverage
 .coverage.*
 htmlcov/
+draft.md
