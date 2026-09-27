@@ -6,7 +6,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Merchant-side Python SDK that implements the **[x402](https://x402.org) protocol (wire
-v2, `exact` scheme on EVM)** for the **AneePay non-custodial crypto
+v2, `exact` scheme on EVM)** for the **[AneePay](https://aneepay.com) non-custodial crypto
 gateway/facilitator**.
 
 The package turns any ASGI resource server into a paid API: it answers
@@ -941,7 +941,3 @@ Not with this SDK. `network` is constrained to `eip155:*` and the enforced schem
 **Where do I get `account_id` and the gateway clone address?**
 From your AneePay account/onboarding configuration for the gateway you integrate
 with; the SDK only consumes them.
-
-## License
-
-MIT — see [LICENSE](LICENSE). Copyright (c) 2026 aneepay.
