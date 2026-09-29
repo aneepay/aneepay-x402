@@ -22,7 +22,7 @@ before users can upgrade.
 
 Use GitHub private vulnerability reporting:
 
-<https://github.com/aneepay/aneepay-x402/security/advisories/new>
+<https://github.com/thyord-oss/aneepay-x402/security/advisories/new>
 
 If that form is unavailable, open a regular issue that contains **no exploit details**
 and asks the maintainer to enable private reporting.

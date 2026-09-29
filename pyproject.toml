@@ -37,8 +37,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://aneepay.com/"
-Repository = "https://github.com/aneepay/aneepay-x402"
-Issues = "https://github.com/aneepay/aneepay-x402/issues"
+Repository = "https://github.com/thyord-oss/aneepay-x402"
+Issues = "https://github.com/thyord-oss/aneepay-x402/issues"
 
 [build-system]
 requires = ["hatchling"]
@@ -53,7 +53,7 @@ packages = ["src/x402_sdk"]
 # The sdist must contain only what a consumer needs to build and test the
 # package. Without an explicit include list, hatchling falls back to the
 # project root, and tool directories that are not ignored by the root
-# .gitignore (e.g. .opencode/node_modules) end up inside the archive.
+# .gitignore end up inside the archive.
 [tool.hatch.build.targets.sdist]
 include = [
     "/src",
