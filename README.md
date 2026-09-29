@@ -1,8 +1,8 @@
 # aneepay-x402
 
-[![PyPI](https://img.shields.io/pypi/v/aneepay-x402.svg)](https://pypi.org/project/aneepay-x402/)
-[![Python](https://img.shields.io/pypi/pyversions/aneepay-x402.svg)](https://pypi.org/project/aneepay-x402/)
-[![License](https://img.shields.io/pypi/l/aneepay-x402.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/aneepay-x402.svg?style=flat-square)](https://pypi.org/project/aneepay-x402/)
+[![Python](https://img.shields.io/pypi/pyversions/aneepay-x402.svg?style=flat-square)](https://pypi.org/project/aneepay-x402/)
+[![License](https://img.shields.io/pypi/l/aneepay-x402.svg?style=flat-square)](LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Merchant-side Python SDK that implements the **[x402](https://x402.org) protocol (wire
