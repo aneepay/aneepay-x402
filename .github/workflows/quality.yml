@@ -39,7 +39,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v10
+      # setup-uv only publishes floating major tags up to v7, so a full
+      # release tag is the only ref that resolves on v8 and later.
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           # Pinned so tests run against the same uv that builds the release.
           # Keep in sync with publish.yml.
