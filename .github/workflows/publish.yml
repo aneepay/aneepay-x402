@@ -3,8 +3,9 @@ name: Publish - aneepay-x402
 on:
   push:
     tags:
-      # Only real releases. A bare "v*" also matches tags such as vfoo or v-next.
-      - "v*.*.*"
+      # Only real releases: v1.2.3. A bare "v*" also matches tags such as
+      # vfoo or v-next, and "v*.*.*" still matches v.1.2.3.
+      - "v[0-9]+.[0-9]+.[0-9]+"
   # Manual runs verify the release pipeline (build, lint, tests, metadata)
   # but never upload: PyPI forbids replacing an already published version.
   workflow_dispatch:
