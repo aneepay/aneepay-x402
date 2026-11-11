@@ -45,6 +45,7 @@ funds held by the SDK or the server**.
 - [Wire format reference](#wire-format-reference)
 - [Behaviour and caveats](#behaviour-and-caveats)
 - [Testing and mocking](#testing-and-mocking)
+- [Architecture decisions](#architecture-decisions)
 - [Project layout](#project-layout)
 - [Development](#development)
 - [Security notes](#security-notes)
@@ -812,6 +813,13 @@ no settle; settle failure → 402 with `unexpected_settle_error`; `FacilitatorEr
 Because `pytest-asyncio` runs in `asyncio_mode = "auto"`, `async def test_*` functions
 need no decorator.
 
+## Architecture decisions
+
+The public contract and the money-handling decisions are recorded as ADRs in
+[`docs/adr`](docs/adr/README.md): package layers, settlement and replay,
+bootstrap and configuration, wire vendoring, errors and observability,
+versioning, and the security model.
+
 ## Project layout
 
 ```text
@@ -822,6 +830,7 @@ aneepay-x402/
 ├── .github/workflows/
 │   ├── quality.yml           # PR lint + test matrix (3.10 / 3.12 / 3.13)
 │   └── publish.yml           # tag v* → uv build → PyPI (trusted publishing)
+├── docs/adr/                 # architecture decision records
 ├── src/x402_sdk/
 │   ├── __init__.py           # public re-exports, __version__
 │   ├── py.typed              # PEP 561 marker
