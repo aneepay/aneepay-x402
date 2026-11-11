@@ -1,11 +1,11 @@
 """x402 wire-v2 schemas (vendored duplicate).
 
-This module intentionally duplicates the wire contract owned by the AneePay
-facilitator (``fastapi/src/x402/schemas.py``). The SDK must stay self-contained
-(no imports from ``fastapi/`` or ``django/``), so the contract is pinned by a
-unit test instead of a shared package — see ``tests/test_schemas_contract.py``.
+This module intentionally duplicates the public wire contract served by the
+AneePay facilitator at aneepay.com. The SDK must stay self-contained, so the
+contract is pinned by a unit test instead of a shared package — see
+``tests/test_wire_contract.py``.
 
-Pin: x402 specification v2 (``docs/specs/x402/x402-specification-v2.md``).
+Pin: x402 specification v2.
 Python fields are snake_case; the wire representation is camelCase (aliases),
 serialized via :func:`to_wire`.
 """

@@ -1,7 +1,7 @@
 """Wire-v2 contract tests: pin the camelCase JSON shapes the facilitator expects.
 
-These schemas are intentionally duplicated from the AneePay facilitator
-(`fastapi/src/x402/schemas.py`, see ADR 0006); a deliberate drift must fail here.
+These schemas are intentionally vendored from the public AneePay facilitator
+contract; a deliberate drift must fail here.
 """
 
 from __future__ import annotations

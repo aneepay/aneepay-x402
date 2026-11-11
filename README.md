@@ -75,9 +75,9 @@ Doing that by hand means three non-obvious jobs:
 the private key: the client wallet signs, your server never sees a key, and the
 facilitator never takes custody.
 
-The SDK is **self-contained** — `httpx`, `pydantic` and `starlette` only. It does not
-import from the rest of the AneePay monorepo, and the x402 wire schemas are
-vendored on purpose and pinned by a contract test (see
+The SDK is **self-contained** — `httpx`, `pydantic` and `starlette` only. It has no
+hidden dependencies, and the x402 wire schemas are vendored on purpose and
+pinned by a contract test (see
 [Wire format reference](#wire-format-reference)).
 
 > This package is **not** the upstream [`x402`](https://pypi.org/project/x402/)
@@ -627,7 +627,7 @@ become a `402` with the message in `error`; facilitator problems become a `402` 
 
 The schemas in `x402_sdk.schemas` are a **vendored duplicate** of the contract owned by
 the AneePay facilitator, pinned by `tests/test_wire_contract.py`. They are
-deliberately not imported from the monorepo (the SDK must stay installable on its own)
+deliberately vendored rather than imported (the SDK must stay installable on its own)
 and deliberately strict: every model is `extra="forbid"` and rejects unknown keys, so
 a facilitator that adds a field will surface loudly instead of silently.
 

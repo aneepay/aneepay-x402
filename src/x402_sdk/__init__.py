@@ -1,8 +1,8 @@
 """AneePay merchant-side x402 SDK (exact scheme, EVM).
 
-The SDK is self-contained and does not import from the AneePay monorepo
-applications. Wire-v2 schemas are intentionally duplicated from the facilitator
-(`fastapi/`) and guarded by a contract test.
+The SDK is self-contained and has no hidden dependencies. Wire-v2
+schemas are intentionally vendored from the public facilitator contract and
+guarded by a contract test.
 """
 
 from __future__ import annotations
