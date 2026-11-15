@@ -49,11 +49,11 @@ sends and tolerant about what it receives.
 
 The policy is asymmetric:
 
-| Direction | Policy |
-| --- | --- |
-| SDK-generated outbound objects | `extra="forbid"` — a typo must fail before the request leaves the process |
-| Client-originated objects that are forwarded | preserve unknown fields — never drop data the facilitator may need |
-| Facilitator responses | `extra="ignore"` — an additive field must not break a payment |
+| Direction                                    | Policy                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| SDK-generated outbound objects               | `extra="forbid"` — a typo must fail before the request leaves the process |
+| Client-originated objects that are forwarded | preserve unknown fields — never drop data the facilitator may need        |
+| Facilitator responses                        | `extra="ignore"` — an additive field must not break a payment             |
 
 Implementation rules:
 

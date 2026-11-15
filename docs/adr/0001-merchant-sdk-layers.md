@@ -25,7 +25,7 @@ know:
   client signatures will not verify;
 - that the offer must be built, cached, and matched to a path manually:
   `OFFERS = {"/v1/report": build_payment_required(...)}`, and `require_payment` does not
-  filter routes. The README states it plainly: *"Route filtering is your job"*.
+  filter routes. The README states it plainly: _"Route filtering is your job"_.
 
 This is protocol knowledge, not the merchant's task. The merchant's task is "charge for
 this endpoint/tool".
@@ -54,10 +54,10 @@ section, is the price of not having a facade layer.
 
 ### 1. One distribution, two layers
 
-| Layer | Location | Audience | Stability |
-| --- | --- | --- | --- |
-| **core** | `x402_sdk` (`schemas`, `requirements`, codecs, `client`, `require_payment`) | advanced: custom plumbing, non-Starlette stacks, wire debugging | public, changes under semver |
-| **framework** | `x402_sdk.fastapi` (extra `[fastapi]`), later `x402_sdk.mcp` (extra `[mcp]`) | API/MCP server owner | **entry point and primary contract** |
+| Layer         | Location                                                                     | Audience                                                        | Stability                            |
+| ------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------ |
+| **core**      | `x402_sdk` (`schemas`, `requirements`, codecs, `client`, `require_payment`)  | advanced: custom plumbing, non-Starlette stacks, wire debugging | public, changes under semver         |
+| **framework** | `x402_sdk.fastapi` (extra `[fastapi]`), later `x402_sdk.mcp` (extra `[mcp]`) | API/MCP server owner                                            | **entry point and primary contract** |
 
 Not separate packages. Reasons: one version and one release, one contract test for the
 wire schemas, and no possibility of schema drift between the "core" and the "plugin".
@@ -100,7 +100,7 @@ The layer's mandatory minimum:
 - `install(app)` / `X402Route` — route-level interception, installed before routes are
   registered; no I/O (ADR 0003).
 - `paid("0.05")` next to the route: `per="request"` only in `0.2`, `price=lambda
-  request: ...` for dynamic pricing; metered pricing is deferred (ADR 0003).
+request: ...` for dynamic pricing; metered pricing is deferred (ADR 0003).
 - OpenAPI: `402` plus `x-payment-info` on a paid route; the price list is exposed at
   `/.well-known/x402` (ADR 0003).
 - `on_settled(event)` — typed settlement hook; `on_event(event)` covers the whole

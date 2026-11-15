@@ -42,18 +42,18 @@ traceback, URL, or header must never reach the client.
 
 ### 2. HTTP response mapping
 
-| Situation | Status | Body | Notes |
-| --- | --- | --- | --- |
-| No `PAYMENT-SIGNATURE` | `402` | x402 `PaymentRequired` | `PAYMENT-REQUIRED` header; `error` is a safe code |
-| Malformed or mismatched payment | `402` | x402 `PaymentRequired` | `error="payment_invalid"` |
-| Verification returned `isValid=false` | `402` | x402 `PaymentRequired` | safe mapped reason |
-| Replay / payment in flight | `402` | x402 `PaymentRequired` | `error="payment_already_used"` or `payment_in_progress` |
-| Handler returned an error | handler status | handler body | `/settle` is not called |
-| Settlement rejected (`success=false`) | `402` | x402 `PaymentRequired` | `error="settlement_failed"`; paid content is not returned |
-| Facilitator unavailable after retries | `503` | RFC 7807 | `Retry-After`; never `402` |
-| Settlement transport failure | `503` | RFC 7807 | `Retry-After`; paid content is not returned |
-| Unexpected SDK bug | `500` | RFC 7807 | generic `internal_error`; trace id only |
-| Configuration/startup failure | no response | exception | application must not start |
+| Situation                             | Status         | Body                   | Notes                                                     |
+| ------------------------------------- | -------------- | ---------------------- | --------------------------------------------------------- |
+| No `PAYMENT-SIGNATURE`                | `402`          | x402 `PaymentRequired` | `PAYMENT-REQUIRED` header; `error` is a safe code         |
+| Malformed or mismatched payment       | `402`          | x402 `PaymentRequired` | `error="payment_invalid"`                                 |
+| Verification returned `isValid=false` | `402`          | x402 `PaymentRequired` | safe mapped reason                                        |
+| Replay / payment in flight            | `402`          | x402 `PaymentRequired` | `error="payment_already_used"` or `payment_in_progress`   |
+| Handler returned an error             | handler status | handler body           | `/settle` is not called                                   |
+| Settlement rejected (`success=false`) | `402`          | x402 `PaymentRequired` | `error="settlement_failed"`; paid content is not returned |
+| Facilitator unavailable after retries | `503`          | RFC 7807               | `Retry-After`; never `402`                                |
+| Settlement transport failure          | `503`          | RFC 7807               | `Retry-After`; paid content is not returned               |
+| Unexpected SDK bug                    | `500`          | RFC 7807               | generic `internal_error`; trace id only                   |
+| Configuration/startup failure         | no response    | exception              | application must not start                                |
 
 The `402` body stays x402-compatible: `x402Version`, `error`, `resource`,
 `accepts`, `extensions`. The `PAYMENT-REQUIRED` header is always present. RFC 7807

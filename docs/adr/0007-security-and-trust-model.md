@@ -25,13 +25,13 @@ identifier, not a credential.
 
 ### 1. Trust boundaries
 
-| Component | Trust level | Consequences |
-| --- | --- | --- |
-| Merchant application | trusted | runs the SDK in-process; owns its access control and secrets |
-| Client / agent / wallet | untrusted | every header and payload is validated |
-| AneePay facilitator | trusted for verify/settle | responses are validated; error text is not trusted for display |
-| Replay store | trusted, but may be unavailable | fail closed when it cannot reserve |
-| `account_id` | public identifier | never treated as authentication or a secret |
+| Component               | Trust level                     | Consequences                                                   |
+| ----------------------- | ------------------------------- | -------------------------------------------------------------- |
+| Merchant application    | trusted                         | runs the SDK in-process; owns its access control and secrets   |
+| Client / agent / wallet | untrusted                       | every header and payload is validated                          |
+| AneePay facilitator     | trusted for verify/settle       | responses are validated; error text is not trusted for display |
+| Replay store            | trusted, but may be unavailable | fail closed when it cannot reserve                             |
+| `account_id`            | public identifier               | never treated as authentication or a secret                    |
 
 The SDK does not custody funds, hold private keys, or sign. Those remain the
 wallet's and the facilitator's responsibility.
