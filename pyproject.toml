@@ -37,8 +37,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://aneepay.com/"
-Repository = "https://github.com/thyord-oss/aneepay-x402"
-Issues = "https://github.com/thyord-oss/aneepay-x402/issues"
+Repository = "https://github.com/aneepay/aneepay-x402"
+Issues = "https://github.com/aneepay/aneepay-x402/issues"
 
 [build-system]
 requires = ["hatchling"]
