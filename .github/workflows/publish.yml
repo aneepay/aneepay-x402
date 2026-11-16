@@ -142,6 +142,15 @@ jobs:
     timeout-minutes: 15
     # The environment gates approval and the trusted publisher; id-token is
     # what mints the OIDC token the publish action exchanges for an upload.
+    #
+    # PyPI matches the OIDC claims against a trusted publisher configured by
+    # hand, and it does not follow repository renames: after a move the stored
+    # owner keeps the old name and every run fails with `invalid-publisher`
+    # before a single file is uploaded. The publisher on
+    # https://pypi.org/manage/project/aneepay-x402/settings/publishing/ must be
+    # (owner, repository, workflow filename, environment) =
+    # (aneepay, aneepay-x402, publish.yml, pypi). Only the file name is
+    # matched, not a path; an empty environment matches any.
     environment: pypi
     permissions:
       id-token: write
