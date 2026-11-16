@@ -24,6 +24,9 @@ jobs:
             sdk:
               - 'src/**'
               - 'tests/**'
+              - 'scripts/**'
+              - 'docs/**'
+              - '*.md'
               - 'pyproject.toml'
               - 'uv.lock'
               - '.github/workflows/quality.yml'
@@ -59,3 +62,85 @@ jobs:
 
       - name: Tests
         run: uv run pytest
+
+  typecheck:
+    name: Type check (pyright strict)
+    needs: changes
+    if: needs.changes.outputs.sdk == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # setup-uv only publishes floating major tags up to v7, so a full
+      # release tag is the only ref that resolves on v8 and later.
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.11.8"
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      # ADR 0006 §8: the shipped modules are strictly typed; the tests are the
+      # specification and are excluded from the check.
+      - name: Pyright (strict)
+        run: uv run pyright
+
+  dependencies:
+    name: Dependencies (${{ matrix.resolution }})
+    needs: changes
+    if: needs.changes.outputs.sdk == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Lowest versions we claim to support, and the newest versions the
+          # resolver currently picks. Upper bounds are intentionally absent
+          # (ADR 0006 §4), so the "highest" leg is what catches a breaking
+          # dependency release before users do.
+          #
+          # pydantic-core does not ship wheels for the oldest pydantic on the
+          # newest interpreters, so the lowest leg stays on the oldest Python
+          # we support (3.10); the highest leg runs on the newest.
+          - resolution: lowest-direct
+            python-version: "3.10"
+          - resolution: highest
+            python-version: "3.13"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.11.8"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install ${{ matrix.resolution }} dependency versions
+        run: uv sync --extra dev --resolution ${{ matrix.resolution }}
+
+      # Log the exact versions so a failure is diagnosable from the run log.
+      - name: Report resolved versions
+        run: |
+          .venv/bin/python - <<'PY'
+          import sys
+
+          import httpx
+          import pydantic
+          import pytest
+          import pytest_asyncio
+          import starlette
+
+          print(
+              "python", sys.version.split()[0],
+              "| httpx", httpx.__version__,
+              "| pydantic", pydantic.VERSION,
+              "| starlette", starlette.__version__,
+              "| pytest", pytest.__version__,
+              "| pytest-asyncio", pytest_asyncio.__version__,
+          )
+          PY
+
+      # Call the interpreter directly: `uv run` would re-sync the environment
+      # back to the default resolution and silently undo the matrix leg.
+      - name: Tests
+        run: .venv/bin/python -m pytest
