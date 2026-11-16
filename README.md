@@ -824,13 +824,15 @@ versioning, and the security model.
 
 ```text
 aneepay-x402/
-├── pyproject.toml            # hatchling, deps, ruff + pytest config
+├── pyproject.toml            # hatchling, deps, ruff + pytest + pyright + coverage config
+├── CHANGELOG.md              # Keep a Changelog + Unreleased
 ├── LICENSE                   # MIT
 ├── README.md
 ├── .github/workflows/
-│   ├── quality.yml           # PR lint + test matrix (3.10 / 3.12 / 3.13)
-│   └── publish.yml           # tag v* → uv build → PyPI (trusted publishing)
+│   ├── quality.yml           # PR lint, types, coverage, dependency-bounds matrix
+│   └── publish.yml           # tag v* → gates → artifact smoke tests → PyPI
 ├── docs/adr/                 # architecture decision records
+├── scripts/smoke_install.py  # install-from-artifact smoke test (wheel + sdist)
 ├── src/x402_sdk/
 │   ├── __init__.py           # public re-exports, __version__
 │   ├── py.typed              # PEP 561 marker
@@ -846,6 +848,7 @@ aneepay-x402/
     ├── test_requirements.py
     ├── test_client.py
     ├── test_middleware.py
+    ├── test_deprecation.py   # deprecation-policy gate (ADR 0006 §5)
     ├── test_package.py
     └── test_wire_contract.py # pins the exact wire dicts
 ```
@@ -858,15 +861,36 @@ mypy/pyright consumers.
 ```bash
 uv sync --extra dev        # create .venv with runtime + dev extras
 
-uv run ruff check .        # lint (ruff, select = ALL)
+uv run ruff check .           # lint (ruff, select = ALL)
 uv run ruff format --check .  # formatting
-uv run pytest              # tests, asyncio_mode = auto
+uv run pyright                # strict type check of src/x402_sdk
+uv run pytest                 # tests + coverage gate (90% for the shipped modules)
 ```
 
-CI runs the same three commands on every PR that touches `src/**`, `tests/**`,
-`pyproject.toml` or `uv.lock`, across Python 3.10, 3.12 and 3.13. Publishing happens
-on `v*` tags via `uv build` and PyPI trusted publishing (OIDC) — no long-lived token
-in the repository. Dependabot updates `github-actions` and `uv` weekly.
+`uv run pytest` already enforces what CI enforces: the suite is offline, coverage
+is reported for `src/x402_sdk` and must stay at or above 90%, and any
+`DeprecationWarning` is an error — a deprecation has to be wrapped in
+`pytest.warns(DeprecationWarning)` and documented (ADR 0006 §5) to ship.
+
+CI runs those commands on every PR that touches `src/**`, `tests/**`, `scripts/**`,
+`docs/**`, `*.md`, `pyproject.toml` or `uv.lock`, and adds two matrix axes:
+
+- **Python 3.10, 3.12 and 3.13** — the declared support matrix.
+- **Dependency resolution** — `lowest-direct` (the exact floors in
+  `pyproject.toml`, tested on 3.10 because the oldest `pydantic` has no wheels for
+  the newest interpreters) and `highest` (no upper bounds are declared, so this
+  leg is what catches a breaking dependency release). Both legs call the
+  interpreter directly instead of `uv run`, which would re-resolve.
+
+Publishing happens on `v*` tags via `uv build` and PyPI trusted publishing (OIDC) —
+no long-lived token in the repository. Before anything is uploaded, `publish.yml`
+installs the built wheel and the sdist into separate clean environments and runs
+`scripts/smoke_install.py`, which imports the package from outside the checkout,
+checks `py.typed` and runtime metadata, and exercises the offline offer/header
+path. Dependabot updates `github-actions` and `uv` weekly.
+
+Keep [`CHANGELOG.md`](CHANGELOG.md) current: user-visible changes go under
+`Unreleased` as `Added` / `Changed` / `Fixed` / `Deprecated` (ADR 0006 §9).
 
 Conventions the linter enforces: 120-column lines, Google-style docstrings with typed
 `Args`/`Returns`/`Raises`, docstring code blocks are themselves formatted, and
