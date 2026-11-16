@@ -85,6 +85,7 @@ x402 = X402.from_aneepay(account_id="2f1c2a3b-6f3d-4f7a-9b21-0a6b3f5d1c90")
 app = FastAPI(lifespan=x402.lifespan)
 x402.install(app)
 
+
 @app.get("/v1/report")
 @x402.paid("0.05")
 async def report(): ...

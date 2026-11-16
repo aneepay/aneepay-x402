@@ -151,6 +151,7 @@ attaches the price to the route object, not to a URL string.
 app = FastAPI(lifespan=x402.lifespan)
 x402.install(app)
 
+
 @app.get("/v1/report")
 @x402.paid("0.05")
 async def report(): ...
