@@ -23,6 +23,7 @@ from x402_sdk.schemas import (
     PaymentRequest,
     PaymentRequired,
     PaymentRequirements,
+    PaymentRequirementsExtra,
     ResourceInfo,
     to_wire,
 )
@@ -118,10 +119,7 @@ def build_requirements(
         asset=config.token.address,
         pay_to=config.pay_to,
         max_timeout_seconds=max_timeout_seconds if max_timeout_seconds is not None else config.max_timeout_seconds,
-        extra={
-            "name": config.token.name,
-            "version": config.token.version,
-        },
+        extra=PaymentRequirementsExtra(name=config.token.name, version=config.token.version),
     )
 
 
