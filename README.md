@@ -920,6 +920,9 @@ gate that keeps the SDK aligned with the facilitator.
 - **Amounts must be computed, not concatenated.** Use `build_amount` / `Decimal`;
   float arithmetic in a pricing path is a rounding bug waiting to happen.
 
+To report a vulnerability, use GitHub private vulnerability reporting as described in
+[`SECURITY.md`](SECURITY.md) — never a public issue.
+
 ## Troubleshooting / FAQ
 
 **`ConfigError: resource_url is required to build PaymentRequired`**
